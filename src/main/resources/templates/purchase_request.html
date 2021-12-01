@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+    <title>CatCom</title>
+</head>
+
+<body>
+    <nav class="navbar justify-content-center">
+        <ul class="nav">
+            <li class="navbar-text">
+                <a th:href="@{/}" class="nav-link text-light">Home</a>
+            </li>
+            <li class="navbar-text">
+                <a th:href="@{/item/all}" class="nav-link text-light">All items</a>
+            </li>
+            <li class="navbar-text">
+                <a th:href="@{/request/all}" class="nav-link text-light">All shopping requests</a>
+            </li>
+            <li class="navbar-text">
+                <form th:action="@{/logout}" method="post">
+                    <input type="submit" value="Sign Out" id="signout" class="nav-link text-light" />
+                </form>
+            </li>
+        </ul>
+    </nav>
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-9 bg-white p-5" id="main-div">
+                <div class="mb-3 text-center">
+                    <h1 class="text-center">Request details</h1>
+                </div>
+                <form action="#" th:action="@{'/request/approve/{id}' (id=${request.requestId})}" method="POST" class="p-5 mx-auto">
+                    <!--Info about purchase request-->
+                    <div class="form-group row">
+                        <Strong class="col-3">Request number:</Strong>
+                        <p th:text="'#' + ${request.requestId}"></p>
+                    </div>
+                    <div class="form-group row">
+                        <Strong class="col-3">Status</Strong>
+                        <p>
+                            <span class="btn-success p-1 rounded">Created</span>
+                            <span class="btn-success p-1 rounded">Sent</span>
+                            <span class="btn-warning p-1 rounded" th:unless="${request.approvedTime != null}">
+                                Pending for approval</span>
+                            <span class="btn-success p-1 rounded" th:if="${request.approvedTime != null}">Approved</span>
+                            <span class="btn-warning p-1 rounded" th:unless="${request.purchasedTime != null}">
+                                Pending for purchase</span>
+                            <span class="btn-success p-1 rounded" th:if="${request.purchasedTime != null}">Purchased</span>
+                        </p>
+                    </div>
+                    <div class="form-group row">
+                        <Strong class="col-3">Creator:</Strong>
+                        <p th:text="${request.creator}"> </p>
+                    </div>
+                    <div class="form-group row">
+                        <Strong class="col-3">Created time:</Strong>
+                        <p th:text="${request.createdTime}"> </p>
+                    </div>
+                    <div class="form-group row">
+                        <Strong class="col-3">Sent time:</Strong>
+                        <p th:text="${request.sentTime}"></p>
+                    </div>
+                    <div class="form-group row">
+                        <Strong class="col-3">Approved time:</Strong>
+                        <p th:if="${request.approvedTime != null}" th:text="${request.approvedTime}"></p>
+                        <p th:unless="${request.approvedTime != null}">N/A</p>
+                    </div>
+                    <div class="form-group row">
+                        <Strong class="col-3">Purchase time:</Strong>
+                        <p th:if="${request.purchasedTime != null}" th:text="${request.purchasedTime}"></p>
+                        <p th:unless="${request.purchasedTime != null}">N/A</p>
+                    </div>
+                    <!--Item approval list-->
+                    <div class="form-group row">
+                        <Strong class="col-3">List of items:</Strong>
+                        <table class="table-bordered w-75 text-center">
+                            <thead class="table-dark">
+                                <th>No.</th>
+                                <th>Name</th>
+                                <th>Brand</th>
+                                <th>Category</th>
+                                <th>Current stock</th>
+                                <th>Purchase quantiy</th>
+                                <th>Approved</th>
+                                <th>Purchased</th>
+                            </thead>
+                            <tbody>
+                                <tr th:each="re,stat: ${request.requestItems}">
+                                    <td th:text="${stat.count}"></td>
+                                    <td th:text="${re.item.name}"></td>
+                                    <td th:text="${re.item.brand.name}"></td>
+                                    <td th:text="${re.item.category.name}"></td>
+                                    <td th:text="${re.item.stockQty}"></td>
+                                    <td th:text="*{request.requestItems[__${stat.index}__].requestQty}"></td>
+                                    <td>
+                                        <input sec:authorize="hasAuthority('PARENT')" th:if="${request.approvedTime == null}" type="checkbox" name="approved"
+                                            th:value="${re.item.itemId}"/>
+                                        <span sec:authorize="hasAuthority('CAT')" th:if="${request.approvedTime == null}">Pending</span>
+                                        <span th:if="${request.approvedTime != null and re.isApproved == true}">Yes</span>
+                                        <span th:if="${request.approvedTime != null and re.isApproved == false}">No</span>
+                                    </td>
+                                    <td>
+                                        <span th:if="${re.isApproved == false}">No</span>
+                                        <span th:if="${re.isApproved == true and request.purchasedTime == null}">Pending</span>
+                                        <span th:if="${re.isApproved == true and request.purchasedTime != null}">Yes</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row justify-content-end mt-2">
+                        <!--Approve button: clickable and disabled-->
+                        <input sec:authorize="hasAuthority('PARENT')" th:if="${request.approvedTime == null}" type="submit" value="Approve"
+                            class="btn btn-info m-2">
+                        <!--Purchase button: clickable and disabled-->
+                
+                        <a sec:authorize="hasAuthority('PARENT')" th:if="${request.purchasedTime == null and request.approvedTime != null}" th:href="@{'/request/purchase/{id}'(id=${request.requestId})}"
+                            class="btn btn-info m-2">Purchase</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link type="text/css" rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+	<title>CatCom</title>
+</head>
+<body>
+	<!--Top nav bar-->
+	<nav class="navbar justify-content-center">
+		<ul class="nav">
+			<li sec:authorize="hasAuthority('CAT')" class="navbar-text">
+				<a th:href="@{/request/new/step1}" class="nav-link text-light">Create a shopping request</a>
+			</li>
+			<li class="navbar-text">
+				<a th:href="@{/item/all}" class="nav-link text-light">All items</a>
+			</li>
+			<li class="navbar-text">
+				<a th:href="@{/request/all}" class="nav-link text-light">All shopping requests</a>
+			</li>
+			<li class="navbar-text">
+				<form th:action="@{/logout}" method="post">
+					<input type="submit" value="Sign Out" id="signout" class="nav-link text-light"/>
+				</form>
+			</li>
+		</ul>
+	</nav>
+	<!--Main content-->
+	<div class="container-fluid">
+		<div class="row justify-content-center align-items-center">
+			<div id="main-div" class="col-9 bg-light p-5">
+				<div class="d-block p-5 mx-auto text-center">
+					<h1>Welcome to Catcom!</h1>
+					<div sec:authorize="hasAuthority('CAT')" class="col-7 my-5 mx-auto">
+						<p>Hi <strong>[[${#httpServletRequest.remoteUser}]]</strong>, you are assigned to:</p>
+						<p>1. Check and update your inventory every week</p>						
+						<p>2. Make a shopping request and send it to your parent</p>
+						<p>The weekly <strong>deadline</strong> for these tasks are by <strong class="text-danger">23:59 PM every Friday</strong>.</p>
+						<a th:href="@{/request/new/step1}" class="btn-grad mx-auto mt-5 w-50">Start here</a>
+					</div>
+					
+					<div sec:authorize="hasAuthority('PARENT')" class="col-8 my-5 mx-auto">
+						<p>Hi <strong>[[${#httpServletRequest.remoteUser}]]</strong>, please help your cat do the following:</p>
+						<p>1. Process the unapproved shopping requests</p>						
+						<p>2. Purchase what you have approved</p>
+						<p>Please confirm your approval and purchase what you have approved <strong class="text-danger">before Mondays</strong></p>
+						<a th:href="@{/request/all}" class="btn-grad mx-auto mt-5 w-75">See all shopping requests here</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+
+</html>

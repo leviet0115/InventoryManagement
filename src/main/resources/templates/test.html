@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+    <title>CatCom</title>
+</head>
+
+<body class="m-4">
+    <nav>
+        <ul class="nav justify-content-center">
+            <li class="nav-item">
+                <a th:href="@{/}" class="nav-link">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link">Shopping List</a>
+            </li>
+            <li>
+                <a class="nav-link">Current inventory</a>
+            </li>
+        </ul>
+    </nav>
+
+    <p th:text="file"></p>
+</body>
+
+</html>

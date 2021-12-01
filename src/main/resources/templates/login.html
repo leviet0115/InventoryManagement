@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Login</title>
+</head>
+
+<body>
+    <div>
+        <div class="mt-5 container">
+            <div class="row  justify-content-center">
+                <div class="col-6 justify-content-center">
+                    <div th:if="${param.error}">
+                        Invalid username and password.
+                    </div>
+                    <form th:action="@{/login}" method="post">
+                        <div class="form-group row justify-content-center">
+                            <label class="col-3">Username:</label>
+                            <input class="col-3" type="text" name="username" placeholder="cat or parent"/>
+                        </div>
+                        <div class="form-group row justify-content-center">
+                            <label class="col-3">Password:</label>
+                            <input class="col-3" type="password" name="password" placeholder="cat or parent"/>
+                        </div>
+                        <div class="row justify-content-center">
+                            <a th:href="@{/signup}" class="btn btn-primary mx-5">Sign up</a>
+                            <input type="submit" value="Sign In" class="btn btn-info mx-5" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

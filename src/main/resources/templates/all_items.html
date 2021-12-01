@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link type="text/css" rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+	<title>All items</title>
+</head>
+
+<body>
+	<nav class="navbar justify-content-center">
+		<ul class="nav">
+			<li class="navbar-text">
+				<a th:href="@{/}" class="nav-link text-light">Home</a>
+			</li>
+			<li sec:authorize="hasAuthority('CAT')" class="navbar-text">
+				<a th:href="@{/request/new/step1}" class="nav-link text-light">Create a shopping request</a>
+			</li>
+			<li class="navbar-text">
+				<a th:href="@{/request/all}" class="nav-link text-light">All shopping requests</a>
+			</li>
+			<li class="navbar-text">
+				<form th:action="@{/logout}" method="post">
+					<input type="submit" value="Sign Out" id="signout" class="nav-link text-light" />
+				</form>
+			</li>
+		</ul>
+	</nav>
+	<div class="container-fluid">
+		<div class="row justify-content-center align-items-center">
+			<div class="col-9 bg-white p-5" id="main-div">
+				<div class="mb-5 text-center">
+					<h2 sec:authorize="hasAuthority('CAT')">
+						Hi <strong>[[${#httpServletRequest.remoteUser}]]</strong>, these are what you got in your inventory!
+					</h2>
+					<div sec:authorize="hasAuthority('PARENT')">
+						<h2>Hi <strong>[[${#httpServletRequest.remoteUser}]]</strong>, these are what your cat got in his inventory!</h2>
+						<p class="text-danger font-weight-bold">We give you the right to delete and edit everything (except image), so please be careful!</p>
+					</div>
+				</div>
+				<table class="table table-striped table-hover text-center">
+					<thead class="thead-dark">
+						<th>No.</th>
+						<th>Item name</th>
+						<th>Brand</th>
+						<th>Category</th>
+						<th>Weight</th>
+						<th>Expiry date</th>
+						<th>Stock</th>
+						<th>Image</th>
+						<th name="for-buttons"></th>
+					</thead>
+					<tbody>
+						<tr th:each="item,stat: *{items}">
+							<td th:text="${stat.count}"></td>
+							<td th:text="${item.name}"></td>
+							<td th:text="${item.brand.name}"></td>
+							<td th:text="${item.category.name}"></td>
+							<td th:text="${item.weight} + ' g'"></td>
+							<td th:text="${item.expiryDate}"></td>
+							<td th:text="${item.stockQty}"></td>
+							<td>
+								<span th:unless="${item.image != ''}">No picutre available</span>
+								<img th:if="${item.image != ''}" th:src="@{${item.photosImagePath}}" alt="Item image"
+									class="img-thumbnail" />
+							</td>
+							<td>
+								<a th:href="@{'/item/edit/{id}'(id=${item.itemId})}" class="btn btn-dark btn-sm py-0">Edit</a>
+								<a sec:authorize="hasAuthority('PARENT')" th:href="@{'/item/delete/{id}'(id=${item.itemId})}" class="btn btn-dark btn-sm py-0">Delete</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

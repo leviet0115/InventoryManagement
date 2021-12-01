@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+    <title>Add a new item</title>
+</head>
+
+<body>
+    <nav class="navbar justify-content-center">
+        <ul class="nav">
+            <li class="navbar-text">
+                <a th:href="@{/}" class="nav-link text-light">Home</a>
+            </li>
+            <li class="navbar-text">
+                <a th:href="@{/item/all}" class="nav-link text-light">All items</a>
+            </li>
+            <li class="navbar-text">
+                <a th:href="@{/request/all}" class="nav-link text-light">All shopping lists</a>
+            </li>
+            <li class="navbar-text">
+                <form th:action="@{/logout}" method="post">
+                    <input type="submit" value="Sign Out" id="signout" class="nav-link text-light" />
+                </form>
+            </li>
+        </ul>
+    </nav>
+    <div class="container-fluid">
+        <div class="row justify-content-center align-items-center" >
+            <div class="col-9 bg-white p-5" id="main-divs">
+                <div class="row">
+                    <div class="col-4 p-5 text-center">
+                        <h2>Optional: add a new item</h2>
+                        <div class="my-3">
+                            <p>Hey <strong>[[${#httpServletRequest.remoteUser}]]</strong>, if you wanna buy something new, you should add it right now! </p>
+                            <p>You are allowed to <strong>one</strong> new item per request/week.</p>
+                            <p>Otherwise, just skip this step!</p>
+                            <a th:href="@{/request/new/step2}" class="btn-grad mx-auto w-50">Skip</a>
+                        </div>
+                    </div>
+                    <!--Form for creating a new item-->
+                    <form action="#" th:action="@{/item/save}" th:object="${item}" method="post" enctype="multipart/form-data"
+                        name="new-item" class="border p-5 mx-auto col-8">
+                        <div class="form-group row">
+                            <label class="col-4" for="item_name">Item name:</label>
+                            <input name="item_name" type="text" th:field="*{name}" />
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-4" for="category">Category:</label>
+                            <select name="category" th:field="*{category}">
+                                <option th:each="category: ${categories}" th:value="${category.categoryId}" th:text="${category.name}">
+                                </option>
+                            </select>
+                            <button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#category-form">
+                                +
+                            </button>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-4" for="brand">Brand:</label>
+                            <select name="brand" th:field="*{brand}">
+                                <option th:each="brand: ${brands}" th:value="${brand.brandId}" th:text="${brand.name}" />
+                            </select>
+                            <button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#brand-form">+</button>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-4" for="number" readonly>Stock quantity:</label>
+                            <input name="quantity" type="text" th:field="*{stockQty}" />
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-4" for="weight">Unit weight (g):</label>
+                            <input name="weight" type="number" min="0" th:field="*{weight}" />
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-4" for="expiry">Expiry date:</label>
+                            <input name="expiry" type="date" th:field="*{expiryDate}" />
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-4" for="image">Item image:</label>
+                            <input type="file" accept="image/png, image/jpeg" name="file" />
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <input type="submit" name="save-item" />
+                            <input type="reset" />
+                        </div>
+                    </form>
+                    </div>
+                </div>
+        </div>
+    </div>
+    
+
+    <!-- Modal for creating a new category-->
+    <div class="modal fade" id="category-form" tabindex="-1" role="dialog" aria-labelledby="category-form-label"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="category-form-title">Create a new category</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="#" th:action="@{/category/save}" th:object="${category}" method="post"
+                        name="new-category">
+                        <div  class="mb-3">
+                            <label for="category_name">Category name:</label>
+                            <input type="text" th:field="*{name}" name="category_name" />
+                            <input type="submit" name="save-category" />
+                        </div>
+                        <div class="d-flex" th:each="category: ${categories}">
+                            <td>
+                                <p th:text="${category.name} + ' - '"></p>
+                                <a th:href="@{'/category/delete/{id}'(id=${category.categoryId})}">Delete</a>
+                            </td>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Modal for creating a new brand-->
+    <div class="modal fade" id="brand-form" tabindex="-1" role="dialog" aria-labelledby="brand-form-label"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="brand-form-title">Create a new brand</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="#" th:action="@{/brand/save}" th:object="${brand}" method="post" name="new-brand">
+                        <div class="mb-3">
+                            <label for="brand_name">Brand name:</label>
+                            <input type="text" th:field="*{name}" name="brand_name" />
+                            <input type="submit" name="save-brand" />
+                        </div>
+                        <div class="d-flex" th:each="brand: ${brands}">
+                            <p th:text="${brand.name} + ' - '"></p>
+                            <a th:href="@{'/brand/delete/{id}'(id=${brand.brandId})}">Delete</a>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
+</body>
+
+</html>

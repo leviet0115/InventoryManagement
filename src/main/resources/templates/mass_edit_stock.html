@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link type="text/css" rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+	<title>Step 1</title>
+</head>
+
+<body>
+	<nav class="navbar justify-content-center">
+		<ul class="nav">
+			<li class="navbar-text">
+				<a th:href="@{/}" class="nav-link text-light">Home</a>
+			</li>
+			<li class="navbar-text">
+				<a th:href="@{/item/all}" class="nav-link text-light">All items</a>
+			</li>
+			<li class="navbar-text">
+				<a th:href="@{/request/all}" class="nav-link text-light">All shopping requests</a>
+			</li>
+			<li class="navbar-text">
+				<form th:action="@{/logout}" method="post">
+					<input type="submit" value="Sign Out" id="signout" class="nav-link text-light" />
+				</form>
+			</li>
+		</ul>
+	</nav>
+	<div class="container-fluid">
+		<div class="row justify-content-center align-items-center">
+			<div class="col-9 bg-white p-5" id="main-div">
+				<div class="mb-5 text-center">
+					<h2>Step 1: Please check and update the inventory stock and expiry date</h2>
+					<p>Tips: You can decrease the stock only. The new stock purchase is strictly handled as separate.</p>
+				</div>
+				<form action="#" th:action="@{/item/saves}" th:object="${wrapper}" method="POST">
+					<table class="table table-striped table-hover table-responsive-lg text-center">
+						<thead class="thead-dark">
+							<th>No.</th>
+							<th>Item name</th>
+							<th>Image</th>
+							<th>Expiry date</th>
+							<th>Stock</th>
+						</thead>
+						<tbody>
+							<tr th:each="item,stat: ${wrapper.items}">
+								<!--Hidden input field for binding-->
+								<input th:field="*{items[__${stat.index}__].itemId}" type="hidden" />
+								<input th:field="*{items[__${stat.index}__].category.categoryId}" type="hidden" />
+								<input th:field="*{items[__${stat.index}__].brand.brandId}" type="hidden" />
+								<input th:field="*{items[__${stat.index}__].weight}" type="hidden" />
+								<input th:field="*{items[__${stat.index}__].name}" type="hidden" />
+								<input th:field="*{items[__${stat.index}__].createdDate}" type="hidden" />
+								<input th:field="*{items[__${stat.index}__].image}" type="hidden">
+								<!--Display for users -->
+								<td th:text="${stat.count}"></td>
+								<td th:text="${item.name}"></td>
+								<td>
+									<img th:if="${item.image != ''}" th:src="@{${item.photosImagePath}}" alt="item image"
+										class="img-thumbnail" />
+									<p th:unless="${item.image != ''}">No picutre available</p>
+								</td>
+								<td>
+									<input th:field="*{items[__${stat.index}__].expiryDate}" type="date" />
+								</td>
+								<td>
+									<input th:field="*{items[__${stat.index}__].stockQty}" type="number" th:max="${item.stockQty}"
+										min=0 />
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div class="row justify-content-end pt-3">
+						<input type="submit" class="btn btn-info" value="Update" />
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

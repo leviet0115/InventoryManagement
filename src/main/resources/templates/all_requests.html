@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link type="text/css" rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+    <title>All shopping request</title>
+</head>
+
+<body>
+    <nav class="navbar justify-content-center">
+        <ul class="nav">
+            <li class="navbar-text">
+                <a th:href="@{/}" class="nav-link text-light">Home</a>
+            </li>
+            <li sec:authorize="hasAuthority('CAT')" class="navbar-text">
+                <a th:href="@{/request/new/step1}" class="nav-link text-light">Create a shopping request</a>
+            </li>
+            <li class="navbar-text">
+                <a th:href="@{/item/all}" class="nav-link text-light">All items</a>
+            </li>
+            <li class="navbar-text">
+                <form th:action="@{/logout}" method="post">
+                    <input type="submit" value="Sign Out" id="signout" class="nav-link text-light" />
+                </form>
+            </li>
+        </ul>
+    </nav>
+    <div class="container-fluid">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-9 bg-white p-5" id="main-div">
+                <div class="mb-5 text-center">
+                    <h2 sec:authorize="hasAuthority('CAT')" class="row justify-content-center">
+                        Hi [[${#httpServletRequest.remoteUser}]], these are the shopping requests that you have created!
+                    </h2>
+                    <h2 sec:authorize="hasAuthority('PARENT')" class="row justify-content-center">
+                        Hi [[${#httpServletRequest.remoteUser}]], these are the shopping requests that you need to process!
+                    </h2>
+                </div>
+                <table class="table text-center">
+                    <thead class="thead-dark">
+                        <th>No.</th>
+                        <th>Created</th>
+                        <th>Sent</th>
+                        <th>Approved</th>
+                        <th>Purchased</th>
+                        <th></th>
+                    </thead>
+                    <tbody>
+                        <tr th:each="request,stat: *{requests}">
+                            <th th:text="${stat.count}"></th>
+                            <td th:text="${request.createdTime}"></td>
+                            <td th:text="${request.sentTime}"></td>
+                            <td th:if="${request.approvedTime != null}" th:text="${request.approvedTime}"></td>
+                            <td th:if="${request.approvedTime == null}" >
+                                <span class="bg-warning p-1">Not approved</span>
+                            <td th:if="${request.purchasedTime != null}" th:text="${request.purchasedTime}"></td>
+                            <td th:if="${request.purchasedTime == null}">
+                                <span class="bg-warning p-1">Not purchased</span>
+                            </td>
+                            <td>
+                                <a th:href="@{'/request/{id}'(id=${request.requestId})}">View</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

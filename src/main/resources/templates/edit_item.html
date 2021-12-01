@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+    <title>Add a new item</title>
+</head>
+
+<body>
+    <nav class="navbar justify-content-center">
+        <ul class="nav">
+            <li class="navbar-text">
+                <a th:href="@{/}" class="nav-link text-light">Home</a>
+            </li>
+            <li class="navbar-text">
+                <a th:href="@{/item/all}" class="nav-link text-light">All items</a>
+            </li>
+            <li class="navbar-text">
+                <a th:href="@{/request/all}" class="nav-link text-light">All shopping request
+                    s</a>
+            </li>
+            <form th:action="@{/logout}" method="post">
+                <input type="submit" value="Sign Out" id="signout" class="nav-link text-light" />
+            </form>
+        </ul>
+    </nav>
+    <div class="container-fluid">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-9 bg-white p-5" id="main-div" >
+                <div class="mb-3 text-center">
+                    <h1>Item modification </h1>
+                    <p>You can modify the following fields only</p>
+                </div>
+                <!--Form for creating a new item-->
+                <form action="#" th:action="@{/item/save}" th:object="${item}" method="post" enctype="multipart/form-data"
+                    name="new-item" class="border p-5 mx-auto w-50">
+                    <!--Hidden input for binding-->
+                    <input type="hidden" th:field="*{image}">
+                    <input type="hidden" th:field="*{itemId}">
+                    <!--Display for users-->
+                    <div class="form-group row">
+                        <label class="col-4" for="item_name">Item name:</label>
+                        <input name="item_name" type="text" th:field="*{name}" />
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4" for="category">Category:</label>
+                        <select name="category" th:field="*{category}">
+                            <option th:each="category: ${categories}" th:value="${category.categoryId}"
+                                th:text="${category.name}">
+                            </option>
+                        </select>
+                        <button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#category-form">
+                            +
+                        </button>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4" for="brand">Brand:</label>
+                        <select name="brand" th:field="*{brand}">
+                            <option th:each="brand: ${brands}" th:value="${brand.brandId}" th:text="${brand.name}" />
+                        </select>
+                        <button type="button" class="btn btn-dark btn-sm" data-toggle="modal"
+                            data-target="#brand-form">+</button>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4" for="number" readonly>Stock quantity:</label>
+                        <input name="quantity" type="text" th:field="*{stockQty}" />
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4" for="weight">Unit weight (g):</label>
+                        <input name="weight" type="number" min="0" th:field="*{weight}" />
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4" for="expiry">Expiry date:</label>
+                        <input name="expiry" type="date" th:field="*{expiryDate}" />
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <input type="submit" name="save-item" />
+                        <input type="reset" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </form>
+</body>
+</html>
