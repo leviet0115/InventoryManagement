@@ -155,7 +155,7 @@ public class Item {
 	@Transient
 	public String getPhotosImagePath() {
 		if (image == null || itemId == null) return null;
-		return "/images/item/" + itemId + "/" + image;
+		return "https://raw.githubusercontent.com/leviet0115/InventoryManagement/Master/" + itemId + "/" + image;
 	}
 
 }
